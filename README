@@ -1,0 +1,33 @@
+                                =======
+                                eduterm
+                                =======
+
+
+Learning what's going on behind the scenes in X11 terminal emulators.
+
+This is for educational purposes.
+
+
+Installation
+------------
+
+The following C libraries are required:
+
+    - libx11
+
+To build the program, run:
+
+    $ make
+
+You really should read the source code.
+
+
+Running
+-------
+
+Open a new terminal window:
+
+    $ eduterm
+
+If you use a tiling window manager, make sure that you're in "floating"
+mode.
