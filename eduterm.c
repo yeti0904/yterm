@@ -375,7 +375,6 @@ run(struct PTY *pty, struct X11 *x11)
                      * wrap to the next line implicitly, so that
                      * additional newline could cause the cursor to jump
                      * to the next line *again*.) */
-                    x11->buf_x = 0;
                     x11->buf_y++;
                     just_wrapped = false;
                 }
