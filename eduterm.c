@@ -49,6 +49,38 @@ struct X11
 };
 
 bool
+term_set_size(struct PTY *pty, struct X11 *x11)
+{
+    struct winsize ws = {
+        .ws_col = x11->buf_w,
+        .ws_row = x11->buf_h,
+    };
+
+    /* This is the very same ioctl that normal programs use to query the
+     * window size. Normal programs are actually able to do this, too,
+     * but it makes little sense: Setting the size has no effect on the
+     * PTY driver in the kernel (it just keeps a record of it) or the
+     * terminal emulator. IIUC, all that's happening is that subsequent
+     * ioctls will report the new size -- until another ioctl sets a new
+     * size.
+     *
+     * I didn't see any response to ioctls of normal programs in any of
+     * the popular terminals (XTerm, VTE, st). They are not informed by
+     * the kernel when a normal program issues an ioctl like that.
+     *
+     * On the other hand, if we were to issue this ioctl during runtime
+     * and the size actually changed, child programs would get a
+     * SIGWINCH. */
+    if (ioctl(pty->master, TIOCSWINSZ, &ws) == -1)
+    {
+        perror("ioctl(TIOCSWINSZ)");
+        return false;
+    }
+
+    return true;
+}
+
+bool
 pt_pair(struct PTY *pty)
 {
     char *slave_name;
@@ -333,6 +365,9 @@ main()
         return 1;
 
     if (!pt_pair(&pty))
+        return 1;
+
+    if (!term_set_size(&pty, &x11))
         return 1;
 
     if (!spawn(&pty))
