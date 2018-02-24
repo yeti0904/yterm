@@ -4,9 +4,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stropts.h>
+#include <sys/ioctl.h>
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <termios.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -51,8 +54,12 @@ pt_pair(struct PTY *pty)
     char *slave_name;
 
     /* Opens the PTY master device. This is the file descriptor that
-     * we're reading from and writing to in our terminal emulator. */
-    pty->master = posix_openpt(O_RDWR);
+     * we're reading from and writing to in our terminal emulator.
+     *
+     * We're going for BSD-style management of the controlling terminal:
+     * Don't try to change anything now (O_NOCTTY), we'll issue an
+     * ioctl() later on. */
+    pty->master = posix_openpt(O_RDWR | O_NOCTTY);
     if (pty->master == -1)
     {
         perror("posix_openpt");
@@ -87,7 +94,7 @@ pt_pair(struct PTY *pty)
         return false;
     }
 
-    pty->slave = open(slave_name, O_RDWR);
+    pty->slave = open(slave_name, O_RDWR | O_NOCTTY);
     if (pty->slave == -1)
     {
         perror("open(slave_name)");
@@ -207,6 +214,16 @@ spawn(struct PTY *pty)
     if (p == 0)
     {
         close(pty->master);
+
+        /* Create a new session and make our terminal this process'
+         * controlling terminal. The shell that we'll spawn in a second
+         * will inherit the status of session leader. */
+        setsid();
+        if (ioctl(pty->slave, TIOCSCTTY, NULL) == -1)
+        {
+            perror("ioctl(TIOCSCTTY)");
+            return false;
+        }
 
         dup2(pty->slave, 0);
         dup2(pty->slave, 1);
