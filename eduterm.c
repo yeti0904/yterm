@@ -14,13 +14,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-/* Font selection has not been implemented. Instead, we assume that we
- * get some font by default that fits in 8x16 pixels and has an ascent
- * of 13 pixels -- or something close. */
-#define FONT_W 8
-#define FONT_H 16
-#define FONT_ASC 13
-
 /* Launching /bin/sh may launch a GNU Bash and that can have nasty side
  * effects. On my system, it clobbers ~/.bash_history because it doesn't
  * respect $HISTSIZE from my ~/.bashrc. That's very annoying. So, launch
@@ -42,6 +35,9 @@ struct X11
     Window termwin;
     GC termgc;
     int w, h;
+
+    XFontStruct *xfont;
+    int font_width, font_height;
 
     char *buf;
     int buf_w, buf_h;
@@ -166,7 +162,8 @@ x11_redraw(struct X11 *x11)
             if (!iscntrl(buf[0]))
             {
                 XDrawString(x11->dpy, x11->termwin, x11->termgc,
-                            x * FONT_W, y * FONT_H + FONT_ASC,
+                            x * x11->font_width,
+                            y * x11->font_height + x11->xfont->ascent,
                             buf, 1);
             }
         }
@@ -174,9 +171,9 @@ x11_redraw(struct X11 *x11)
 
     XSetForeground(x11->dpy, x11->termgc, 0xFF00FF00);
     XFillRectangle(x11->dpy, x11->termwin, x11->termgc,
-                   x11->buf_x * FONT_W,
-                   x11->buf_y * FONT_H,
-                   FONT_W, FONT_H);
+                   x11->buf_x * x11->font_width,
+                   x11->buf_y * x11->font_height,
+                   x11->font_width, x11->font_height);
 
     XSync(x11->dpy, False);
 }
@@ -200,6 +197,15 @@ x11_setup(struct X11 *x11)
     x11->root = RootWindow(x11->dpy, x11->screen);
     x11->fd = ConnectionNumber(x11->dpy);
 
+    x11->xfont = XLoadQueryFont(x11->dpy, "fixed");
+    if (x11->xfont == NULL)
+    {
+        fprintf(stderr, "Could not load font\n");
+        return false;
+    }
+    x11->font_width = XTextWidth(x11->xfont, "m", 1);
+    x11->font_height = x11->xfont->ascent + x11->xfont->descent;
+
     /* The terminal will have a fixed size of 80x25 cells. This is an
      * arbitrary number. No resizing has been implemented and child
      * processes can't even ask us for the current size (for now).
@@ -216,8 +222,8 @@ x11_setup(struct X11 *x11)
         return false;
     }
 
-    x11->w = x11->buf_w * FONT_W;
-    x11->h = x11->buf_h * FONT_H;
+    x11->w = x11->buf_w * x11->font_width;
+    x11->h = x11->buf_h * x11->font_height;
 
     x11->termwin = XCreateWindow(x11->dpy, x11->root,
                                  0, 0,
