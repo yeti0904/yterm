@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stropts.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
@@ -333,29 +334,36 @@ run(struct PTY *pty, struct X11 *x11)
                 return 1;
             }
 
-            if (buf[0] == '\n')
+            /* Save the byte we just read into the next free cell and
+             * then advance to "the next cell". We'll soon figure out
+             * what that means. */
+            x11->buf[x11->buf_y * x11->buf_w + x11->buf_x] = buf[0];
+            x11->buf_x++;
+
+            /* If we read a newline or if we reached the right end of
+             * the window, we're going to advance to "the next line". */
+            if (buf[0] == '\n' || x11->buf_x >= x11->buf_w)
             {
-                /* On newline characters, we advance to the next line
-                 * and clear any previous contents.
-                 *
-                 * If we reached the bottom of our buffer, we jump back
-                 * to the very first line. Proper scrolling may get
-                 * implemented later. */
                 x11->buf_x = 0;
                 x11->buf_y++;
-                x11->buf_y %= x11->buf_h;
+            }
+
+            /* We now check if "the next line" is actually outside of
+             * the buffer. If it is, we shift the entire content one
+             * line up and then stay in the very last line.
+             *
+             * After the memmove(), the last line still has the old
+             * content. We must clear it. */
+            if (x11->buf_y >= x11->buf_h)
+            {
+                memmove(x11->buf, &x11->buf[x11->buf_w],
+                        x11->buf_w * (x11->buf_h - 1));
+                x11->buf_y = x11->buf_h - 1;
+
                 for (i = 0; i < x11->buf_w; i++)
                     x11->buf[x11->buf_y * x11->buf_w + i] = 0;
             }
-            else
-            {
-                /* If this is a regular character, advance one cell to
-                 * the right. Once we reaced the right-most cell, jump
-                 * back to the first one and overwrite existing data. */
-                x11->buf[x11->buf_y * x11->buf_w + x11->buf_x] = buf[0];
-                x11->buf_x++;
-                x11->buf_x %= x11->buf_w;
-            }
+
             x11_redraw(x11);
         }
 
