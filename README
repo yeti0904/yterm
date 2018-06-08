@@ -1,6 +1,13 @@
-                                =======
-                                eduterm
-                                =======
+            _       _
+    ___  __| |_   _| |_ ___ _ __ _ __ ___
+   / _ \/ _` | | | | __/ _ \ '__| '_ ` _ \
+  |  __/ (_| | |_| | ||  __/ |  | | | | | |
+   \___|\__,_|\__,_|\__\___|_|  |_| |_| |_|
+  https://uninformativ.de/git/eduterm
+  https://uninformativ.de/bugs.html
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 Learning what's going on behind the scenes in X11 terminal emulators.
