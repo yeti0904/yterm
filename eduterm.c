@@ -294,7 +294,7 @@ spawn(struct PTY *pty)
         dup2(pty->slave, 2);
         close(pty->slave);
 
-        execle(SHELL, "-" SHELL, NULL, env);
+        execle(SHELL, "-" SHELL, (char *)NULL, env);
         return false;
     }
     else if (p > 0)
