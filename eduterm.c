@@ -184,7 +184,6 @@ x11_setup(struct X11 *x11)
 {
     Colormap cmap;
     XColor color;
-    Atom atom_net_wmname;
     XSetWindowAttributes wa = {
         .background_pixmap = ParentRelative,
         .event_mask = KeyPressMask | KeyReleaseMask | ExposureMask,
@@ -254,14 +253,9 @@ x11_setup(struct X11 *x11)
                                  DefaultVisual(x11->dpy, x11->screen),
                                  CWBackPixmap | CWEventMask,
                                  &wa);
+    XStoreName(x11->dpy, x11->termwin, "eduterm");
     XMapWindow(x11->dpy, x11->termwin);
     x11->termgc = XCreateGC(x11->dpy, x11->termwin, 0, NULL);
-
-    atom_net_wmname = XInternAtom(x11->dpy, "_NET_WM_NAME", False);
-    XChangeProperty(x11->dpy, x11->termwin, atom_net_wmname,
-                    XInternAtom(x11->dpy, "UTF8_STRING", False), 8,
-                    PropModeReplace, (unsigned char *)"eduterm",
-                    strlen("eduterm"));
 
     XSync(x11->dpy, False);
 
