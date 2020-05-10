@@ -1,5 +1,5 @@
-LDLIBS += -lX11
-CFLAGS += -std=c99 -Wall -Wextra
+LDLIBS += `pkg-config --libs x11`
+CFLAGS += -std=c99 -Wall -Wextra `pkg-config --cflags x11`
 
 .PHONY: all clean
 
