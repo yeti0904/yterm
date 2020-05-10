@@ -272,7 +272,7 @@ bool
 spawn(struct PTY *pty)
 {
     pid_t p;
-    char *env[] = { NULL };
+    char *env[] = { "TERM=dumb", NULL };
 
     p = fork();
     if (p == 0)
