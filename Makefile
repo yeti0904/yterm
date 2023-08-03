@@ -1,11 +1,18 @@
-LDLIBS += `pkg-config --libs x11`
-CFLAGS += -std=c99 -Wall -Wextra `pkg-config --cflags x11`
+SRC   = $(wildcard source/*.c)
+DEPS  = $(wildcard source/*.h)
+OBJ   = $(addsuffix .o,$(subst source/,bin/,$(basename ${SRC})))
+LIBS  = -lX11 -lSDL2 -lSDL2_ttf
+FLAGS = -std=c99 -Wall -Wextra -Werror -pedantic -g
 
-.PHONY: all clean
+compile: ./bin $(OBJ) $(SRC)
+	$(CC) $(OBJ) $(LIBS) -o yterm
 
-all: eduterm
+./bin:
+	mkdir -p bin
 
-eduterm: eduterm.c
+bin/%.o: source/%.c
+	$(CC) -c $< $(FLAGS) -o $@
 
 clean:
-	rm eduterm
+	rm bin/*.o yterm
+
