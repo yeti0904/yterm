@@ -2,7 +2,7 @@
 #include "util.h"
 #include "constants.h"
 
-struct Video Video_Init() {
+struct Video Video_Init(void) {
 	struct Video ret;
 
 	// initialise SDL2

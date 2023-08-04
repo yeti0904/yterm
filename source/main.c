@@ -6,7 +6,7 @@
 #include "constants.h"
 #include "components.h"
 
-int main() {
+int main(void) {
 	Terminal terminal;
 
 	Terminal_Init(&terminal);
