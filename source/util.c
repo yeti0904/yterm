@@ -39,3 +39,12 @@ char* DupString(char* str) {
 	strcpy(ret, str);
 	return ret;
 }
+
+SDL_Color HexToColour(uint32_t colour) {
+	return (SDL_Color) {
+		(colour >> 16) & 0xFF,
+		(colour >> 8) & 0xFF,
+		colour & 0xFF,
+		255
+	};
+}

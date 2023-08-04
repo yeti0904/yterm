@@ -1,5 +1,6 @@
-#include "textScreen.h"
 #include "safe.h"
+#include "util.h"
+#include "textScreen.h"
 
 TextScreen TextScreen_New(uint32_t w, uint32_t h) {
 	TextScreen ret;
@@ -41,6 +42,22 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 		case '\n': {
 			++ text->cursor.y;
 			text->cursor.x = 0;
+
+			if (text->cursor.y >= text->size.y) {
+				// scroll
+				// TODO: make scrollback thingy
+				size_t remainingLength =
+					(text->size.x * text->size.y) - text->size.x;
+				memmove(
+					text->cells, text->cells + text->size.x, remainingLength
+				);
+
+				for (int i = 0; i < text->size.x; ++ i) {
+					text->cells[remainingLength + i] = (Cell) {' '};
+				}
+
+				text->cursor.y = text->size.y - 1;
+			}
 			break;
 		}
 		case '\r': {
@@ -49,6 +66,14 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 		}
 		case '\t': {
 			text->cursor.x += 4;
+			break;
+		}
+		case 0x08: { // backspace
+			-- text->cursor.x;
+
+			if (text->cursor.x < 0) {
+				text->cursor.x = 0;
+			}
 			break;
 		}
 		default: {
@@ -87,8 +112,8 @@ void TextScreen_Render(TextScreen* text, Video* video) {
 
 			Cell cell = TextScreen_GetCharacter(text, x, y);
 
-			SDL_Color fg = {255, 255, 255, 255};
-			SDL_Color bg = {0,   0,   0,   255};
+			SDL_Color fg = HexToColour(0xC9CCCD);
+			SDL_Color bg = HexToColour(0x161C24);
 
 			if ((x == text->cursor.x) && (y == text->cursor.y)) {
 				SDL_Color temp = fg;

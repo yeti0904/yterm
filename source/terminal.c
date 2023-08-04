@@ -2,10 +2,67 @@
 #include "constants.h"
 #include "terminal.h"
 
-bool SetTerminalSize(struct PTY* pty, struct X11* x11) {
+void Terminal_Init(Terminal* terminal) {
+	terminal->running  = true;
+	terminal->inEscape = false;
+}
+
+void Terminal_Update(Terminal* terminal) {
+	// check for stuff in stdout
+	fd_set readable;
+	char   in;
+	
+	FD_ZERO(&readable);
+	FD_SET(terminal->pty.master, &readable);
+
+	struct timeval selectTimeout;
+	selectTimeout.tv_sec  = 0;
+	selectTimeout.tv_usec = 1;
+
+	if (
+		select(
+			terminal->pty.master + 1, &readable, NULL, NULL, &selectTimeout
+		) == -1
+	) {
+		perror("select");
+		exit(1);
+	}
+
+	while (FD_ISSET(terminal->pty.master, &readable)) {
+		if (read(terminal->pty.master, &in, 1) <= 0) {
+			/* This is not necessarily an error but also happens
+			 * when the child exits normally. */
+			fprintf(stderr, "Nothing to read from child: ");
+			perror(NULL);
+			exit(1);
+		}
+
+		switch (in) {
+			case '\x1b': {
+				terminal->inEscape = true;
+				break;
+			}
+			default: {
+				TextScreen_PutCharacter(&terminal->buffer, in);
+			}
+		}
+
+		if (
+			select(
+				terminal->pty.master + 1, &readable, NULL, NULL, &selectTimeout
+			) == -1
+		) {
+			perror("select");
+			exit(1);
+		}
+	}
+}
+
+// this code is most likely to survive my purge of eduterm's X11 code
+void SetTerminalSize(Terminal* terminal) {
 	struct winsize ws = {
-		.ws_col = x11->buf_w,
-		.ws_row = x11->buf_h,
+		.ws_col = terminal->buffer.size.x,
+		.ws_row = terminal->buffer.size.y,
 	};
 
 	/* This is the very same ioctl that normal programs use to query the
@@ -23,15 +80,13 @@ bool SetTerminalSize(struct PTY* pty, struct X11* x11) {
 	 * On the other hand, if we were to issue this ioctl during runtime
 	 * and the size actually changed, child programs would get a
 	 * SIGWINCH. */
-	if (ioctl(pty->master, TIOCSWINSZ, &ws) == -1) {
+	if (ioctl(terminal->pty.master, TIOCSWINSZ, &ws) == -1) {
 		perror("ioctl(TIOCSWINSZ)");
-		return false;
+		exit(1);
 	}
-
-	return true;
 }
 
-bool PtPair(struct PTY *pty) {
+void PtPair(Pty* pty) {
 	char *slave_name;
 
 	/* Opens the PTY master device. This is the file descriptor that
@@ -41,25 +96,22 @@ bool PtPair(struct PTY *pty) {
 	 * Don't try to change anything now (O_NOCTTY), we'll issue an
 	 * ioctl() later on. */
 	pty->master = posix_openpt(O_RDWR | O_NOCTTY);
-	if (pty->master == -1)
-	{
+	if (pty->master == -1) {
 		perror("posix_openpt");
-		return false;
+		exit(1);
 	}
 
 	/* grantpt() and unlockpt() are housekeeping functions that have to
 	 * be called before we can open the slave FD. Refer to the manpages
 	 * on what they do. */
-	if (grantpt(pty->master) == -1)
-	{
+	if (grantpt(pty->master) == -1) {
 		perror("grantpt");
-		return false;
+		exit(1);
 	}
 
-	if (unlockpt(pty->master) == -1)
-	{
+	if (unlockpt(pty->master) == -1) {
 		perror("grantpt");
-		return false;
+		exit(1);
 	}
 
 	/* Up until now, we only have the master FD. We also need a file
@@ -71,19 +123,17 @@ bool PtPair(struct PTY *pty) {
 	slave_name = ptsname(pty->master);
 	if (slave_name == NULL) {
 		perror("ptsname");
-		return false;
+		exit(1);
 	}
 
 	pty->slave = open(slave_name, O_RDWR | O_NOCTTY);
 	if (pty->slave == -1) {
 		perror("open(slave_name)");
-		return false;
+		exit(1);
 	}
-
-	return true;
 }
 
-bool Spawn(struct PTY *pty) {
+void Spawn(Pty* pty) {
 	pid_t p;
 	char* env[] = {"TERM=dumb", NULL};
 
@@ -98,7 +148,7 @@ bool Spawn(struct PTY *pty) {
 		if (ioctl(pty->slave, TIOCSCTTY, NULL) == -1)
 		{
 			perror("ioctl(TIOCSCTTY)");
-			return false;
+			exit(1);
 		}
 
 		dup2(pty->slave, 0);
@@ -107,13 +157,13 @@ bool Spawn(struct PTY *pty) {
 		close(pty->slave);
 
 		execle(SHELL, "-" SHELL, (char *)NULL, env);
-		return false;
+		exit(1);
 	}
 	else if (p > 0) {
 		close(pty->slave);
-		return true;
+		return;
 	}
 
 	perror("fork");
-	return false;
+	exit(1);
 }

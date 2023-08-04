@@ -2,36 +2,28 @@
 #define YTERM_TERMINAL_H
 
 #include "components.h"
+#include "sdl.h"
+#include "textScreen.h"
 
-struct PTY { // no clue what this could be
+typedef struct Pty { // no clue what this could be
 	int master, slave;
-};
+} Pty;
 
-struct X11 {
-	int      fd;
-	Display* dpy;
-	int      screen;
-	Window   root;
+typedef struct Terminal {
+	Pty        pty;
+	bool       running;
+	Video      video;
+	TextScreen buffer;
+	bool       inEscape;
+} Terminal;
 
-	Window    termwin;
-	GC        termgc;
-	uint64_t  col_fg, col_bg;
-	int32_t   w; // window size i think?
-	int32_t   h;
+// Terminal
+void Terminal_Init(Terminal* terminal);
+void Terminal_Update(Terminal* terminal);
 
-	XFontStruct* xfont;
-	int32_t      font_width;
-	int32_t      font_height;
-
-	char* buf;
-	int   buf_w, buf_h;
-	int   buf_x, buf_y;
-	bool  readingEscape;
-	char* escape;
-};
-
-bool SetTerminalSize(struct PTY* pty, struct X11* x11);
-bool PtPair(struct PTY *pty);
-bool Spawn(struct PTY *pty);
+// Pty
+void SetTerminalSize(Terminal* terminal);
+void PtPair(Pty* pty);
+void Spawn(Pty* pty);
 
 #endif
