@@ -3,6 +3,8 @@ A terminal emulator written in C, based on [eduterm](https://www.uninformativ.de
 
 Far from complete, any help is appreciated
 
+If you want to use it maybe wait until it has escape sequence support
+
 ## Build
 ```
 make
