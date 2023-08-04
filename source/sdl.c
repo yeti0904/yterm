@@ -109,19 +109,6 @@ void Video_OpenFont(Video* video, char* path) {
 	TTF_SizeText(video->font, str, &video->charWidth, &video->charHeight);
 }
 
-void Video_FreeFont(Video* video) {
-	TTF_CloseFont(video->font);
-
-	for (uint32_t i = 0; i < ARRAY_LEN(video->characters); ++ i) {
-		if (video->characters[i] == NULL) {
-			continue;
-		}
-
-		SDL_DestroyTexture(video->characters[i]);
-		video->characters[i] = NULL;
-	}
-}
-
 void Video_DrawCharacter(Video* video, int x, int y, char ch, SDL_Colour colour) {
 	SDL_Texture* texture = video->characters[(size_t) ch];
 
