@@ -110,6 +110,10 @@ void Video_OpenFont(Video* video, char* path) {
 }
 
 void Video_DrawCharacter(Video* video, int x, int y, char ch, SDL_Colour colour) {
+	if (ch == ' ') {
+		return;
+	}
+
 	SDL_Texture* texture = video->characters[(size_t) ch];
 
 	if (texture == NULL) {

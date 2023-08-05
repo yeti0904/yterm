@@ -4,15 +4,20 @@
 
 Cell NewCell(char ch, uint8_t fg, uint8_t bg, uint16_t attr) {
 	Cell ret;
-	ret.ch   = ch;
-	ret.fg   = fg;
-	ret.bg   = bg;
-	ret.attr = attr;
+	ret.ch        = ch;
+	ret.attr.fg   = fg;
+	ret.attr.bg   = bg;
+	ret.attr.attr = attr;
 	return ret;
 }
 
 Cell CellByCharacter(char ch) {
-	return (Cell) {ch, 0, 0, ATTR_NONE};
+	return NewCell(ch, 0, 0, ATTR_NONE);
+}
+
+AttrInfo NewAttr(uint8_t fg, uint8_t bg, uint16_t attr) {
+	Cell cell = NewCell(0, fg, bg, attr);
+	return cell.attr;
 }
 
 TextScreen TextScreen_New(uint32_t w, uint32_t h) {
@@ -25,6 +30,8 @@ TextScreen TextScreen_New(uint32_t w, uint32_t h) {
 	for (size_t i = 0; i < w * h; ++ i) {
 		ret.cells[i] = CellByCharacter(' ');
 	}
+
+	ret.attr = NewAttr(0, 0, ATTR_NONE);
 
 	return ret;
 }
@@ -124,7 +131,7 @@ void TextScreen_Resize(TextScreen* text, Vec2 newSize) {
 	size_t size     = newSize.x * newSize.y * sizeof(Cell);
 	Cell*  newCells = (Cell*) SafeMalloc(size);
 
-	for (size_t i = 0; i < size; ++ i) {
+	for (size_t i = 0; i < size / sizeof(Cell); ++ i) {
 		newCells[i] = CellByCharacter(' ');
 	}
 

@@ -49,11 +49,15 @@ typedef struct Vec2 {
 	int y;
 } Vec2;
 
-typedef struct Cell {
-	char     ch;
+typedef struct AttrInfo {
 	uint8_t  fg;
 	uint8_t  bg;
 	uint16_t attr;
+} AttrInfo;
+
+typedef struct Cell {
+	char     ch;
+	AttrInfo attr;
 } Cell;
 
 Cell NewCell(char ch, uint8_t fg, uint8_t bg, uint16_t attr);
@@ -64,6 +68,7 @@ typedef struct TextScreen {
 	Vec2          size;
 	Vec2          cursor;
 	ColourScheme* colours;
+	AttrInfo      attr;
 } TextScreen;
 
 TextScreen TextScreen_New(uint32_t w, uint32_t h);
