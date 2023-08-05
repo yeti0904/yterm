@@ -91,7 +91,7 @@ static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount
 		}
 		// erase commands
 		case 'J': {
-			Cell emptyCell = (Cell) {' '};
+			Cell emptyCell = CellByCharacter(' ');
 			
 			if ((argsCount == 0) || (args[0] == 0)) { // until end of line
 				for (

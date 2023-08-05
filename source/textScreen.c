@@ -2,6 +2,19 @@
 #include "util.h"
 #include "textScreen.h"
 
+Cell NewCell(char ch, uint8_t fg, uint8_t bg, uint16_t attr) {
+	Cell ret;
+	ret.ch   = ch;
+	ret.fg   = fg;
+	ret.bg   = bg;
+	ret.attr = attr;
+	return ret;
+}
+
+Cell CellByCharacter(char ch) {
+	return (Cell) {ch, 0, 0, ATTR_NONE};
+}
+
 TextScreen TextScreen_New(uint32_t w, uint32_t h) {
 	TextScreen ret;
 
@@ -10,7 +23,7 @@ TextScreen TextScreen_New(uint32_t w, uint32_t h) {
 	ret.cursor = (Vec2) {.x = 0, .y = 0};
 
 	for (size_t i = 0; i < w * h; ++ i) {
-		ret.cells[i] = (Cell) {' '};
+		ret.cells[i] = CellByCharacter(' ');
 	}
 
 	return ret;
@@ -44,10 +57,10 @@ void TextScreen_ScrollDown(TextScreen* text, int lines) {
 		memmove(text->cells, text->cells + text->size.x, remainingLength);
 
 		for (int i = 0; i < text->size.x; ++ i) {
-			text->cells[remainingLength + i] = (Cell) {' '};
+			text->cells[remainingLength + i] = CellByCharacter(' ');
 		}
 
-		text->cursor.y = text->size.y - 1;
+		-- text->cursor.y;
 	}
 }
 
@@ -84,7 +97,7 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 		}
 		default: {
 			TextScreen_SetCharacter(
-				text, text->cursor.x, text->cursor.y, (Cell) {ch}
+				text, text->cursor.x, text->cursor.y, CellByCharacter(ch)
 			);
 			++ text->cursor.x;
 			break;
@@ -109,7 +122,7 @@ void TextScreen_Resize(TextScreen* text, Vec2 newSize) {
 	Cell*  newCells = (Cell*) SafeMalloc(size);
 
 	for (size_t i = 0; i < size; ++ i) {
-		newCells[i] = (Cell) {' '};
+		newCells[i] = CellByCharacter(' ');
 	}
 
 	for (int y = 0; y < text->size.y; ++ y) {
