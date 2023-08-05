@@ -25,6 +25,7 @@ Cell       TextScreen_GetCharacter(TextScreen* text, int x, int y);
 void       TextScreen_SetCharacter(TextScreen* text, int x, int y, Cell cell);
 void       TextScreen_PutCharacter(TextScreen* text, char ch);
 void       TextScreen_PutString(TextScreen* text, char* str);
+void       TextScreen_Resize(TextScreen* text, Vec2 newSize);
 void       TextScreen_Render(TextScreen* text, Video* video);
 
 #endif

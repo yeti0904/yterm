@@ -102,6 +102,27 @@ void TextScreen_PutString(TextScreen* text, char* str) {
 	}
 }
 
+void TextScreen_Resize(TextScreen* text, Vec2 newSize) {
+	size_t size     = newSize.x * newSize.y * sizeof(Cell);
+	Cell*  newCells = (Cell*) SafeMalloc(size);
+
+	for (size_t i = 0; i < size; ++ i) {
+		newCells[i] = (Cell) {' '};
+	}
+
+	for (int y = 0; y < text->size.y; ++ y) {
+		for (int x = 0; x < text->size.x; ++ x) {
+			Cell cell = TextScreen_GetCharacter(text, x, y);
+
+			newCells[(y * newSize.x) + x] = cell;
+		}
+	}
+
+	text->size = newSize;
+	free(text->cells);
+	text->cells = newCells;
+}
+
 void TextScreen_Render(TextScreen* text, Video* video) {
 	SDL_SetRenderDrawColor(video->renderer, 0, 0, 0, 255);
 	SDL_RenderClear(video->renderer);

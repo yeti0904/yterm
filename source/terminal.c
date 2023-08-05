@@ -28,6 +28,8 @@ void Terminal_Update(Terminal* terminal) {
 		exit(1);
 	}
 
+	size_t bytesRead = 0;
+
 	while (FD_ISSET(terminal->pty.master, &readable)) {
 		if (read(terminal->pty.master, &in, 1) <= 0) {
 			/* This is not necessarily an error but also happens
@@ -37,6 +39,8 @@ void Terminal_Update(Terminal* terminal) {
 			exit(1);
 		}
 
+		++ bytesRead;
+
 		switch (in) {
 			case '\x1b': {
 				terminal->inEscape = true;
@@ -45,6 +49,10 @@ void Terminal_Update(Terminal* terminal) {
 			default: {
 				TextScreen_PutCharacter(&terminal->buffer, in);
 			}
+		}
+
+		if (bytesRead > 64) {
+			break;
 		}
 
 		if (
