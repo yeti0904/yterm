@@ -66,6 +66,7 @@ int main(void) {
 							};
 
 							TextScreen_Resize(&terminal.buffer, newSize);
+							SetTerminalSize(&terminal);
 							break;
 						}
 					}

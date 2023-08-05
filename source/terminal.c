@@ -154,8 +154,7 @@ void Spawn(Pty* pty) {
 		 * controlling terminal. The shell that we'll spawn in a second
 		 * will inherit the status of session leader. */
 		setsid();
-		if (ioctl(pty->slave, TIOCSCTTY, NULL) == -1)
-		{
+		if (ioctl(pty->slave, TIOCSCTTY, NULL) == -1) {
 			perror("ioctl(TIOCSCTTY)");
 			exit(1);
 		}
