@@ -2,8 +2,8 @@
 #include "util.h"
 #include "constants.h"
 
-struct Video Video_Init() {
-	struct Video ret;
+Video Video_Init() {
+	Video ret;
 
 	// initialise SDL2
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -38,7 +38,23 @@ struct Video Video_Init() {
 	return ret;
 }
 
+void Video_FreeFont(Video* video) {
+	TTF_CloseFont(video->font);
+
+	for (uint32_t i = 0; i < ARRAY_LEN(video->characters); ++ i) {
+		if (video->characters[i] == NULL) {
+			continue;
+		}
+		
+		SDL_DestroyTexture(video->characters[i]);
+		video->characters[i] = NULL;
+	}
+}
+
 void Video_Free(Video* video) {
+	Video_FreeFont(video);
+	TTF_Quit();
+	
 	SDL_DestroyWindow(video->window);
 	SDL_DestroyRenderer(video->renderer);
 	SDL_Quit();
@@ -91,19 +107,6 @@ void Video_OpenFont(Video* video, char* path) {
 
 	const char* str = "M";
 	TTF_SizeText(video->font, str, &video->charWidth, &video->charHeight);
-}
-
-void Video_FreeFont(Video* video) {
-	TTF_CloseFont(video->font);
-
-	for (uint32_t i = 0; i < ARRAY_LEN(video->characters); ++ i) {
-		if (video->characters[i] == NULL) {
-			continue;
-		}
-
-		SDL_DestroyTexture(video->characters[i]);
-		video->characters[i] = NULL;
-	}
 }
 
 void Video_DrawCharacter(Video* video, int x, int y, char ch, SDL_Colour colour) {
