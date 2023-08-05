@@ -2,7 +2,7 @@
 #include "util.h"
 #include "constants.h"
 
-Video Video_Init() {
+Video Video_Init(void) {
 	Video ret;
 
 	// initialise SDL2

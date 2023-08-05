@@ -12,7 +12,7 @@ typedef struct Video {
 	int           charHeight;
 } Video;
 
-Video Video_Init();
+Video Video_Init(void);
 void  Video_Free(Video* video);
 void  Video_OpenFont(Video* video, char* path);
 void  Video_FreeFont(Video* video);
