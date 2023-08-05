@@ -68,6 +68,10 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 			text->cursor.x += 4;
 			break;
 		}
+		case 0x07: { // bell
+			puts("Ding!");
+			break;
+		}
 		case 0x08: { // backspace
 			-- text->cursor.x;
 
