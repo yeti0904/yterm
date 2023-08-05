@@ -113,6 +113,249 @@ static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount
 
 				terminal->buffer.cursor = (Vec2) {0, 0};
 			}
+			break;
+		}
+		// colours/graphics commands
+		case 'm': {
+			for (size_t i = 0; i < argsCount; ++ i) {
+				switch (args[i]) {
+					case 0: { // reset all modes
+						terminal->buffer.attr = NewAttr(0, 0, ATTR_NONE);
+						break;
+					}
+					case 1: { // set bold
+						terminal->buffer.attr.attr |= ATTR_BOLD;
+						break;
+					}
+					case 22: { // reset bold and dim
+						terminal->buffer.attr.attr &= ~ATTR_BOLD;
+						terminal->buffer.attr.attr &= ~ATTR_DIM;
+						break;
+					}
+					case 2: { // set dim
+						terminal->buffer.attr.attr |= ATTR_DIM;
+						break;
+					}
+					case 3: { // set italic
+						terminal->buffer.attr.attr |= ATTR_ITALIC;
+						break;
+					}
+					case 23: { // reset italic
+						terminal->buffer.attr.attr &= ~ATTR_ITALIC;
+						break;
+					}
+					case 4: { // set underline
+						terminal->buffer.attr.attr |= ATTR_UNDERLINE;
+						break;
+					}
+					case 24: { // reset underline
+						terminal->buffer.attr.attr &= ~ATTR_UNDERLINE;
+						break;
+					}
+					case 5: { // set blinking
+						terminal->buffer.attr.attr |= ATTR_BLINKING;
+						break;
+					}
+					case 25: { // reset blinking
+						terminal->buffer.attr.attr &= ~ATTR_BLINKING;
+						break;
+					}
+					case 7: { // set reverse
+						terminal->buffer.attr.attr |= ATTR_REVERSE;
+						break;
+					}
+					case 27: { // reset reverse
+						terminal->buffer.attr.attr &= ~ATTR_REVERSE;
+						break;
+					}
+					case 8: { // set hidden
+						terminal->buffer.attr.attr |= ATTR_HIDDEN;
+						break;
+					}
+					case 28: { // reset hidden
+						terminal->buffer.attr.attr &= ~ATTR_HIDDEN;
+						break;
+					}
+					case 9: { // set strikethrough
+						terminal->buffer.attr.attr |= ATTR_STRIKE;
+						break;
+					}
+					case 29: { // reset strikethrough
+						terminal->buffer.attr.attr &= ~ATTR_STRIKE;
+						break;
+					}
+					case 39: { // reset fg
+						terminal->buffer.attr.attr &= ~ATTR_COLOUR_FG;
+						break;
+					}
+					case 49: { // reset bg
+						terminal->buffer.attr.attr &= ~ATTR_COLOUR_BG;
+						break;
+					}
+					// i am really very sorry for what i have done
+					// i hope you can find it in your heart to forgive me
+					case 30: { // fg black
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BLACK;
+						break;
+					}
+					case 31: { // fg red
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_RED;
+						break;
+					}
+					case 32: { // fg green
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_GREEN;
+						break;
+					}
+					case 33: { // fg yellow
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_YELLOW;
+						break;
+					}
+					case 34: { // fg blue
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BLUE;
+						break;
+					}
+					case 35: { // fg magenta
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_MAGENTA;
+						break;
+					}
+					case 36: { // fg cyan
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_CYAN;
+						break;
+					}
+					case 37: { // fg white
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_WHITE;
+						break;
+					}
+					case 90: { // fg grey
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_GREY;
+						break;
+					}
+					case 91: { // fg bright red
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_RED;
+						break;
+					}
+					case 92: { // fg bright green
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_GREEN;
+						break;
+					}
+					case 93: { // fg bright yellow
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_YELLOW;
+						break;
+					}
+					case 94: { // fg bright blue
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_BLUE;
+						break;
+					}
+					case 95: { // fg bright magenta
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_MAGENTA;
+						break;
+					}
+					case 96: { // fg bright cyan
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_CYAN;
+						break;
+					}
+					case 97: { // fg white
+						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_WHITE;
+						break;
+					}
+					case 40: { // bg black
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BLACK;
+						break;
+					}
+					case 41: { // bg red
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_RED;
+						break;
+					}
+					case 42: { // bg green
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_GREEN;
+						break;
+					}
+					case 43: { // bg yellow
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_YELLOW;
+						break;
+					}
+					case 44: { // bg blue
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BLUE;
+						break;
+					}
+					case 45: { // bg magenta
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_MAGENTA;
+						break;
+					}
+					case 46: { // bg cyan
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_CYAN;
+						break;
+					}
+					case 47: { // bg white
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_WHITE;
+						break;
+					}
+					case 100: { // bg bright black
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_GREY;
+						break;
+					}
+					case 101: { // bg bright  red
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_RED;
+						break;
+					}
+					case 102: { // bg bright green
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_GREEN;
+						break;
+					}
+					case 103: { // bg bright yellow
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_YELLOW;
+						break;
+					}
+					case 104: { // bg bright blue
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_BLUE;
+						break;
+					}
+					case 105: { // bg bright magenta
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_MAGENTA;
+						break;
+					}
+					case 106: { // bg bright cyan
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_CYAN;
+						break;
+					}
+					case 107: { // bg bright white
+						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
+						terminal->buffer.attr.fg    = COLOUR_BRIGHT_WHITE;
+						break;
+					}
+				}
+			}
 		}
 	}
 }

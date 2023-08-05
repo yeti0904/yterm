@@ -107,7 +107,8 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 		}
 		default: {
 			TextScreen_SetCharacter(
-				text, text->cursor.x, text->cursor.y, CellByCharacter(ch)
+				text, text->cursor.x, text->cursor.y,
+				NewCell(ch, text->attr.fg, text->attr.bg, text->attr.attr)
 			);
 			++ text->cursor.x;
 			break;
@@ -170,8 +171,15 @@ void TextScreen_Render(TextScreen* text, Video* video) {
 
 			Cell cell = TextScreen_GetCharacter(text, x, y);
 
-			SDL_Color fg = HexToColour(0xC9CCCD);
-			SDL_Color bg = HexToColour(0x161C24);
+			SDL_Color fg = text->colours->fg;
+			SDL_Color bg = text->colours->bg;
+
+			if (cell.attr.attr & ATTR_COLOUR_FG) {
+				fg = text->colours->colour16[cell.attr.fg];
+			}
+			if (cell.attr.attr & ATTR_COLOUR_BG) {
+				bg = text->colours->colour16[cell.attr.bg];
+			}
 
 			if ((x == text->cursor.x) && (y == text->cursor.y)) {
 				SDL_Color temp = fg;

@@ -60,8 +60,9 @@ typedef struct Cell {
 	AttrInfo attr;
 } Cell;
 
-Cell NewCell(char ch, uint8_t fg, uint8_t bg, uint16_t attr);
-Cell CellByCharacter(char ch);
+Cell     NewCell(char ch, uint8_t fg, uint8_t bg, uint16_t attr);
+Cell     CellByCharacter(char ch);
+AttrInfo NewAttr(uint8_t fg, uint8_t bg, uint16_t attr);
 
 typedef struct TextScreen {
 	Cell*         cells;
