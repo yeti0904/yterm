@@ -52,9 +52,12 @@ void TextScreen_SetCharacter(TextScreen* text, int x, int y, Cell cell) {
 
 void TextScreen_ScrollDown(TextScreen* text, int lines) {
 	for (int i = 0; i < lines; ++ i) {
-		size_t remainingLength = (text->size.x * text->size.y) - text->size.x;
+		size_t remainingLength  = (text->size.x * text->size.y) - text->size.x;
 		
-		memmove(text->cells, text->cells + text->size.x, remainingLength);
+		memmove(
+			text->cells, text->cells + text->size.x,
+			remainingLength * sizeof(Cell)
+		);
 
 		for (int i = 0; i < text->size.x; ++ i) {
 			text->cells[remainingLength + i] = CellByCharacter(' ');
