@@ -35,6 +35,19 @@ int main(void) {
 					HandleInputEvent(&e, &terminal);
 					break;
 				}
+				case SDL_WINDOWEVENT: {
+					switch (e.window.event) {
+						case SDL_WINDOWEVENT_RESIZED: {
+							Vec2 newSize = {
+								e.window.data1 / terminal.video.charWidth,
+								e.window.data2 / terminal.video.charHeight
+							};
+
+							TextScreen_Resize(&terminal.buffer, newSize);
+							break;
+						}
+					}
+				}
 			}
 		}
 	

@@ -111,7 +111,15 @@ void TextScreen_Resize(TextScreen* text, Vec2 newSize) {
 	}
 
 	for (int y = 0; y < text->size.y; ++ y) {
+		if (y >= newSize.y) {
+			break;
+		}
+		
 		for (int x = 0; x < text->size.x; ++ x) {
+			if (x >= newSize.x) {
+				break;
+			}
+		
 			Cell cell = TextScreen_GetCharacter(text, x, y);
 
 			newCells[(y * newSize.x) + x] = cell;
