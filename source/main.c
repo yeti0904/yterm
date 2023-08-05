@@ -43,4 +43,7 @@ int main(void) {
 		TextScreen_Render(&terminal.buffer, &terminal.video);
 		SDL_RenderPresent(terminal.video.renderer);
 	}
+
+	TextScreen_Free(&terminal.buffer);
+	Video_Free(&terminal.video);
 }
