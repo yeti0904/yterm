@@ -1,6 +1,7 @@
-#include "components.h"
-#include "constants.h"
+#include "escapes.h"
 #include "terminal.h"
+#include "constants.h"
+#include "components.h"
 
 void Terminal_Init(Terminal* terminal) {
 	terminal->running  = true;
@@ -43,7 +44,7 @@ void Terminal_Update(Terminal* terminal) {
 
 		switch (in) {
 			case '\x1b': {
-				terminal->inEscape = true;
+				HandleEscape(terminal);
 				break;
 			}
 			default: {
@@ -143,7 +144,7 @@ void PtPair(Pty* pty) {
 
 void Spawn(Pty* pty) {
 	pid_t p;
-	char* env[] = {"TERM=dumb", NULL};
+	char* env[] = {"TERM=xterm-256color", NULL};
 
 	p = fork();
 	if (p == 0) {

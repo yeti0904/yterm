@@ -37,6 +37,20 @@ void TextScreen_SetCharacter(TextScreen* text, int x, int y, Cell cell) {
 	text->cells[(y * text->size.x) + x] = cell;
 }
 
+void TextScreen_ScrollDown(TextScreen* text, int lines) {
+	for (int i = 0; i < lines; ++ i) {
+		size_t remainingLength = (text->size.x * text->size.y) - text->size.x;
+		
+		memmove(text->cells, text->cells + text->size.x, remainingLength);
+
+		for (int i = 0; i < text->size.x; ++ i) {
+			text->cells[remainingLength + i] = (Cell) {' '};
+		}
+
+		text->cursor.y = text->size.y - 1;
+	}
+}
+
 void TextScreen_PutCharacter(TextScreen* text, char ch) {
 	switch (ch) {
 		case '\n': {
@@ -44,19 +58,7 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 			text->cursor.x = 0;
 
 			if (text->cursor.y >= text->size.y) {
-				// scroll
-				// TODO: make scrollback thingy
-				size_t remainingLength =
-					(text->size.x * text->size.y) - text->size.x;
-				memmove(
-					text->cells, text->cells + text->size.x, remainingLength
-				);
-
-				for (int i = 0; i < text->size.x; ++ i) {
-					text->cells[remainingLength + i] = (Cell) {' '};
-				}
-
-				text->cursor.y = text->size.y - 1;
+				TextScreen_ScrollDown(text, 1);
 			}
 			break;
 		}
