@@ -103,7 +103,8 @@ void LoadConfig(ColourScheme* colourScheme) {
 	}
 
 	strcpy(path, home);
-	strcat(path, CONFIG_FOLDER + 1);
+    const char* config_path = CONFIG_FOLDER;
+	strcat(path, config_path + 1); 
 
 	if (access(path, F_OK) != 0) {
 		if (mkdir(path, 0777) != 0) {
