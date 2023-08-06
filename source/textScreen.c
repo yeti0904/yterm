@@ -103,6 +103,10 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 			if (text->cursor.x < 0) {
 				text->cursor.x = 0;
 			}
+			
+			TextScreen_SetCharacter(
+				text, text->cursor.x, text->cursor.y, CellByCharacter(' ')
+			);
 			break;
 		}
 		default: {
@@ -125,6 +129,15 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 void TextScreen_PutString(TextScreen* text, char* str) {
 	for (size_t i = 0; i < strlen(str); ++ i) {
 		TextScreen_PutCharacter(text, str[i]);
+	}
+}
+
+void TextScreen_SetAttribute(TextScreen* text, uint16_t attr, bool on) {
+	if (on) {
+		text->attr.attr |= attr;
+	}
+	else {
+		text->attr.attr &= ~attr;
 	}
 }
 

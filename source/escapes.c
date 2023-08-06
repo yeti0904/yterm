@@ -1,11 +1,6 @@
 #include "safe.h"
+#include "util.h"
 #include "escapes.h"
-
-enum EscapeMode {
-	EscapeMode_Unknown,
-	EscapeMode_Property,
-	EscapeMode_Commands
-};
 
 static bool NextByte(Terminal* terminal, char* byte) {
 	fd_set readable;
@@ -37,6 +32,54 @@ static bool NextByte(Terminal* terminal, char* byte) {
 
 	*byte = in;
 	return true;
+}
+
+static uint8_t FGColour(int colour) {
+	switch (colour) {
+		case 30: return COLOUR_BLACK;
+		case 31: return COLOUR_RED;
+		case 32: return COLOUR_GREEN;
+		case 33: return COLOUR_YELLOW;
+		case 34: return COLOUR_BLUE;
+		case 35: return COLOUR_MAGENTA;
+		case 36: return COLOUR_CYAN;
+		case 37: return COLOUR_WHITE;
+		case 90: return COLOUR_GREY;
+		case 91: return COLOUR_BRIGHT_RED;
+		case 92: return COLOUR_BRIGHT_GREEN;
+		case 93: return COLOUR_BRIGHT_YELLOW;
+		case 94: return COLOUR_BRIGHT_BLUE;
+		case 95: return COLOUR_BRIGHT_MAGENTA;
+		case 96: return COLOUR_BRIGHT_CYAN;
+		case 97: return COLOUR_BRIGHT_WHITE;
+	}
+
+	FATAL("Invalid colour");
+	return 0;
+}
+
+static uint8_t BGColour(int colour) {
+	switch (colour) {
+		case 40:  return COLOUR_BLACK;
+		case 41:  return COLOUR_RED;
+		case 42:  return COLOUR_GREEN;
+		case 43:  return COLOUR_YELLOW;
+		case 44:  return COLOUR_BLUE;
+		case 45:  return COLOUR_MAGENTA;
+		case 46:  return COLOUR_CYAN;
+		case 47:  return COLOUR_WHITE;
+		case 100: return COLOUR_GREY;
+		case 101: return COLOUR_BRIGHT_RED;
+		case 102: return COLOUR_BRIGHT_GREEN;
+		case 103: return COLOUR_BRIGHT_YELLOW;
+		case 104: return COLOUR_BRIGHT_BLUE;
+		case 105: return COLOUR_BRIGHT_MAGENTA;
+		case 106: return COLOUR_BRIGHT_CYAN;
+		case 107: return COLOUR_BRIGHT_WHITE;
+	}
+
+	FATAL("Invalid colour");
+	return 0;
 }
 
 static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount) {
@@ -192,170 +235,68 @@ static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount
 						terminal->buffer.attr.attr &= ~ATTR_COLOUR_BG;
 						break;
 					}
-					// i am really very sorry for what i have done
-					// i hope you can find it in your heart to forgive me
-					case 30: { // fg black
+					case 30:
+					case 31:
+					case 32:
+					case 33:
+					case 34:
+					case 35:
+					case 36:
+					case 37:
+					case 90:
+					case 91:
+					case 92:
+					case 93:
+					case 94:
+					case 95:
+					case 96:
+					case 97: {
 						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BLACK;
+						terminal->buffer.attr.fg    = FGColour(args[i]);
 						break;
 					}
-					case 31: { // fg red
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_RED;
-						break;
-					}
-					case 32: { // fg green
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_GREEN;
-						break;
-					}
-					case 33: { // fg yellow
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_YELLOW;
-						break;
-					}
-					case 34: { // fg blue
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BLUE;
-						break;
-					}
-					case 35: { // fg magenta
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_MAGENTA;
-						break;
-					}
-					case 36: { // fg cyan
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_CYAN;
-						break;
-					}
-					case 37: { // fg white
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_WHITE;
-						break;
-					}
-					case 90: { // fg grey
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_GREY;
-						break;
-					}
-					case 91: { // fg bright red
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_RED;
-						break;
-					}
-					case 92: { // fg bright green
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_GREEN;
-						break;
-					}
-					case 93: { // fg bright yellow
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_YELLOW;
-						break;
-					}
-					case 94: { // fg bright blue
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_BLUE;
-						break;
-					}
-					case 95: { // fg bright magenta
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_MAGENTA;
-						break;
-					}
-					case 96: { // fg bright cyan
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_CYAN;
-						break;
-					}
-					case 97: { // fg white
-						terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_WHITE;
-						break;
-					}
-					case 40: { // bg black
+					case 40:
+					case 41:
+					case 42:
+					case 43:
+					case 44:
+					case 45:
+					case 46:
+					case 47:
+					case 100:
+					case 101:
+					case 102:
+					case 103:
+					case 104:
+					case 105:
+					case 106:
+					case 107: {
 						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BLACK;
-						break;
-					}
-					case 41: { // bg red
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_RED;
-						break;
-					}
-					case 42: { // bg green
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_GREEN;
-						break;
-					}
-					case 43: { // bg yellow
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_YELLOW;
-						break;
-					}
-					case 44: { // bg blue
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BLUE;
-						break;
-					}
-					case 45: { // bg magenta
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_MAGENTA;
-						break;
-					}
-					case 46: { // bg cyan
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_CYAN;
-						break;
-					}
-					case 47: { // bg white
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_WHITE;
-						break;
-					}
-					case 100: { // bg bright black
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_GREY;
-						break;
-					}
-					case 101: { // bg bright  red
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_RED;
-						break;
-					}
-					case 102: { // bg bright green
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_GREEN;
-						break;
-					}
-					case 103: { // bg bright yellow
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_YELLOW;
-						break;
-					}
-					case 104: { // bg bright blue
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_BLUE;
-						break;
-					}
-					case 105: { // bg bright magenta
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_MAGENTA;
-						break;
-					}
-					case 106: { // bg bright cyan
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_CYAN;
-						break;
-					}
-					case 107: { // bg bright white
-						terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
-						terminal->buffer.attr.fg    = COLOUR_BRIGHT_WHITE;
+						terminal->buffer.attr.bg    = BGColour(args[i]);
 						break;
 					}
 				}
 			}
+			break;
+		}
+		default: {
+			printf("Running command %c: ", cmd);
+
+			for (size_t i = 0; i < argsCount; ++ i) {
+				printf("%d ", args[i]);
+			}
+			putchar('\n');
+		}
+	}
+}
+
+void InterpretOption(Terminal* terminal, int option, char value) {
+	(void) terminal;
+	
+	switch (option) {
+		default: {
+			printf("Set option %d to %c", option, value);
+			break;
 		}
 	}
 }
@@ -368,13 +309,38 @@ void HandleEscape(Terminal* terminal) {
 
 	NEXT_BYTE();
 
+	if (in == ']') {
+		NEXT_BYTE();
+	}
+
 	if (in != '[') {
+		// TODO: clean up this mess
+		NEXT_BYTE();
+		if (in != '0') {
+			return;
+		}
+		NEXT_BYTE();
+		if (in != ';') {
+			return;
+		}
+
+		char* title = SafeMalloc(1);
+		title[0]    = 0;
+
+		NEXT_BYTE();
+		while (in != 7) {
+			title = SafeRealloc(title, strlen(title) + 2);
+			strncat(title, &in, 1);
+			NEXT_BYTE();
+		}
+		// TODO: set title
+		free(title);
 		return;
 	}
 
 	NEXT_BYTE();
 
-	if (isdigit(in)) {
+	if (isdigit(in)) { // command
 		// TODO: maybe i should make this not a static array
 		int    args[256];
 		size_t argsCount = 0;
@@ -402,6 +368,29 @@ void HandleEscape(Terminal* terminal) {
 				}
 			}
 		}
+	}
+	else if (in == '?') { // option
+		NEXT_BYTE();
+
+		int option;
+
+		readStr    = SafeMalloc(1);
+		readStr[0] = 0;
+
+		NEXT_BYTE();
+		while (!isdigit(in)) {
+			readStr = SafeRealloc(readStr, strlen(readStr) + 2);
+			strncat(readStr, &in, 1);
+			NEXT_BYTE();
+		}
+
+		if ((in != 'h') && (in != 'l')) {
+			return;
+		}
+
+		option = atoi(readStr);
+
+		InterpretOption(terminal, option, in);
 	}
 }
 
