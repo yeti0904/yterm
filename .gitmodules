@@ -1,0 +1,3 @@
+[submodule "lib/noch"]
+	path = lib/noch
+	url = https://github.com/lordoftrident/noch
