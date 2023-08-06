@@ -4,14 +4,14 @@
 #include "components.h"
 
 void Terminal_Init(Terminal* terminal) {
-	terminal->running  = true;
-	terminal->inEscape = false;
+	terminal->running                 = true;
+	terminal->config.interpretEscapes = true;
 }
 
 void Terminal_Update(Terminal* terminal) {
 	// check for stuff in stdout
-	fd_set readable;
-	char   in;
+	fd_set        readable;
+	unsigned char in;
 	
 	FD_ZERO(&readable);
 	FD_SET(terminal->pty.master, &readable);
@@ -52,7 +52,7 @@ void Terminal_Update(Terminal* terminal) {
 			}
 		}
 
-		if (bytesRead > 64) {
+		if (bytesRead > 1024) {
 			break;
 		}
 

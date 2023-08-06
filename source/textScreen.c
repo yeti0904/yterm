@@ -200,6 +200,12 @@ void TextScreen_Render(TextScreen* text, Video* video) {
 				bg             = temp;
 			}
 
+			if (cell.attr.attr & ATTR_REVERSE) {
+				SDL_Color temp = fg;
+				fg             = bg;
+				bg             = temp;
+			}
+
 			SDL_SetRenderDrawColor(video->renderer, bg.r, bg.g, bg.b, bg.a);
 			SDL_RenderFillRect(video->renderer, &rect);
 

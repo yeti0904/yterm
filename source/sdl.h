@@ -16,6 +16,6 @@ Video Video_Init(void);
 void  Video_Free(Video* video);
 void  Video_OpenFont(Video* video, char* path);
 void  Video_FreeFont(Video* video);
-void  Video_DrawCharacter(Video* video, int x, int y, char ch, SDL_Color colour);
+void  Video_DrawCharacter(Video* video, int x, int y, uchar ch, SDL_Color colour);
 
 #endif

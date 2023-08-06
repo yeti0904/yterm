@@ -109,12 +109,12 @@ void Video_OpenFont(Video* video, char* path) {
 	TTF_SizeText(video->font, str, &video->charWidth, &video->charHeight);
 }
 
-void Video_DrawCharacter(Video* video, int x, int y, char ch, SDL_Colour colour) {
+void Video_DrawCharacter(Video* video, int x, int y, uchar ch, SDL_Colour colour) {
 	if (ch == ' ') {
 		return;
 	}
 
-	SDL_Texture* texture = video->characters[(size_t) ch];
+	SDL_Texture* texture = video->characters[ch];
 
 	if (texture == NULL) {
 		texture = video->characters['?'];

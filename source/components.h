@@ -24,4 +24,6 @@
 #include <noch/json.h>
 #include <noch/args.h>
 
+typedef unsigned char uchar;
+
 #endif

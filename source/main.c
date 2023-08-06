@@ -7,30 +7,57 @@
 #include "components.h"
 #include "config.h"
 
-#define DESC "The terminal emulator of the 27th century"
-const char *usages[] = {
+const char* disclaimer[] = {
+	"Copyright (c) 2023 yeti0904",
+	"",
+	"Permission is hereby granted, free of charge, to any person obtaining a copy",
+	"of this software and associated documentation files (the \"Software\"), to deal",
+	"in the Software without restriction, including without limitation the rights",
+	"to use, copy, modify, merge, publish, distribute, sublicense, and/or sell",
+	"copies of the Software, and to permit persons to whom the Software is",
+	"furnished to do so, subject to the following conditions:",
+	"",
+	"The above copyright notice and this permission notice shall be included in all",
+	"copies or substantial portions of the Software."
+};
+
+const char* usages[] = {
 	"[OPTIONS]",
 };
 
-const char *execPath;
+const char* execPath;
 
-static void Usage(FILE *file) {
-	args_usage_fprint(file, execPath, usages, ARRAY_LEN(usages), DESC, true);
+static void Usage(FILE* file) {
+	args_usage_fprint(file, execPath, usages, ARRAY_LEN(usages), APP_DESC, true);
 }
 
 static void ParseFlags(args_t* args) {
-	bool flag_h = false;
-	flag_bool("h", "help", "Show the usage", &flag_h);
+	bool flagHelp    = false;
+	bool flagVersion = false;
+	flag_bool("h", "help",    "Show the usage",   &flagHelp);
+	flag_bool("v", "version", "Show the version", &flagVersion);
 
 	size_t where;
 	bool   extra;
-	if (args_parse_flags(args, &where, NULL, &extra) != 0)
+	if (args_parse_flags(args, &where, NULL, &extra) != 0) {
 		FATAL("Error: '%s': %s\n", args->v[where], noch_get_err_msg());
-	else if (extra)
+	}
+	else if (extra) {
 		FATAL("Error: '%s': Unexpected argument\n", args->v[where]);
+	}
 
-	if (flag_h) {
+	if (flagHelp) {
 		Usage(stdout);
+		exit(0);
+	}
+
+	if (flagVersion) {
+		printf("%s %s by %s\n", APP_NAME, APP_VERSION, APP_AUTHOR);
+
+		for (size_t i = 0; i < ARRAY_LEN(disclaimer); ++ i) {
+			puts(disclaimer[i]);
+		}
+
 		exit(0);
 	}
 }

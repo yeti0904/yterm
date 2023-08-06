@@ -56,8 +56,8 @@ typedef struct AttrInfo {
 } AttrInfo;
 
 typedef struct Cell {
-	char     ch;
-	AttrInfo attr;
+	unsigned char ch;
+	AttrInfo      attr;
 } Cell;
 
 Cell     NewCell(char ch, uint8_t fg, uint8_t bg, uint16_t attr);

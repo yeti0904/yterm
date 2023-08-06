@@ -9,12 +9,16 @@ typedef struct Pty { // no clue what this could be
 	int master, slave;
 } Pty;
 
+typedef struct TerminalConfig {
+	bool interpretEscapes;
+} TerminalConfig;
+
 typedef struct Terminal {
-	Pty        pty;
-	bool       running;
-	Video      video;
-	TextScreen buffer;
-	bool       inEscape;
+	Pty            pty;
+	bool           running;
+	Video          video;
+	TextScreen     buffer;
+	TerminalConfig config;
 } Terminal;
 
 // Terminal
