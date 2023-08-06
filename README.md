@@ -1,7 +1,7 @@
 <h1 align="center">yterm</h1>
 <p align="center">
     <a href="./LICENSE">
-        [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+        <img alt="License" src="https://img.shields.io/badge/license-MIT-26c3?style=for-the-badge">
     </a>
     <a href="https://github.com/yeti0904/yterm/issues">
         <img alt="Issues" src="https://img.shields.io/github/issues/yeti0904/yterm?style=for-the-badge&color=4f79e4">
