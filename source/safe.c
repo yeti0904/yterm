@@ -1,3 +1,4 @@
+#include "components.h"
 #include "safe.h"
 #include "util.h"
 

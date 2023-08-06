@@ -2,7 +2,7 @@ SRC   = $(wildcard source/*.c)
 DEPS  = $(wildcard source/*.h)
 OBJ   = $(addsuffix .o,$(subst source/,bin/,$(basename ${SRC})))
 LIBS  = -lX11 -lSDL2 -lSDL2_ttf
-FLAGS = -std=c99 -Wall -Wextra -Werror -pedantic -g
+FLAGS = -std=c99 -Wall -Wextra -Werror -pedantic -g -I./lib
 
 compile: ./bin $(OBJ) $(SRC)
 	$(CC) $(OBJ) $(LIBS) -o yterm

@@ -5,8 +5,41 @@
 #include "terminal.h"
 #include "constants.h"
 #include "components.h"
+#include "config.h"
 
-int main(void) {
+#define DESC "The terminal emulator of the 27th century"
+const char *usages[] = {
+	"[OPTIONS]",
+};
+
+const char *execPath;
+
+static void Usage(FILE *file) {
+	args_usage_fprint(file, execPath, usages, ARRAY_LEN(usages), DESC, true);
+}
+
+static void ParseFlags(args_t* args) {
+	bool flag_h = false;
+	flag_bool("h", "help", "Show the usage", &flag_h);
+
+	size_t where;
+	bool   extra;
+	if (args_parse_flags(args, &where, NULL, &extra) != 0)
+		FATAL("Error: '%s': %s\n", args->v[where], noch_get_err_msg());
+	else if (extra)
+		FATAL("Error: '%s': Unexpected argument\n", args->v[where]);
+
+	if (flag_h) {
+		Usage(stdout);
+		exit(0);
+	}
+}
+
+int main(int argc, const char** argv) {
+	args_t args = args_new(argc, argv);
+	execPath    = args_shift(&args);
+	ParseFlags(&args);
+
 	Terminal terminal;
 
 	Terminal_Init(&terminal);
@@ -24,25 +57,8 @@ int main(void) {
 
 	// init colourscheme
 	ColourScheme colourScheme;
-	colourScheme.colour16[COLOUR_BLACK]          = HexToColour(0x212830);
-	colourScheme.colour16[COLOUR_RED]            = HexToColour(0xC54133);
-	colourScheme.colour16[COLOUR_GREEN]          = HexToColour(0x27AE60);
-	colourScheme.colour16[COLOUR_YELLOW]         = HexToColour(0xEDB20A);
-	colourScheme.colour16[COLOUR_BLUE]           = HexToColour(0x2479D0);
-	colourScheme.colour16[COLOUR_MAGENTA]        = HexToColour(0x7D3EA0);
-	colourScheme.colour16[COLOUR_CYAN]           = HexToColour(0x1D8579);
-	colourScheme.colour16[COLOUR_WHITE]          = HexToColour(0xC9CCCD);
-	colourScheme.colour16[COLOUR_GREY]           = HexToColour(0x2F3943);
-	colourScheme.colour16[COLOUR_BRIGHT_RED]     = HexToColour(0xE74C3C);
-	colourScheme.colour16[COLOUR_BRIGHT_GREEN]   = HexToColour(0x2ECC71);
-	colourScheme.colour16[COLOUR_BRIGHT_YELLOW]  = HexToColour(0xF1C40F);
-	colourScheme.colour16[COLOUR_BRIGHT_BLUE]    = HexToColour(0x3498DB);
-	colourScheme.colour16[COLOUR_BRIGHT_MAGENTA] = HexToColour(0x9B59B6);
-	colourScheme.colour16[COLOUR_BRIGHT_CYAN]    = HexToColour(0x2AA198);
-	colourScheme.colour16[COLOUR_BRIGHT_WHITE]   = HexToColour(0xECF0F1);
-	colourScheme.fg                              = HexToColour(0xC9CCCD);
-	colourScheme.bg                              = HexToColour(0x161C24);
-	terminal.buffer.colours                      = &colourScheme;
+	LoadConfig(&colourScheme);
+	terminal.buffer.colours = &colourScheme;
 
 	while (terminal.running) {
 		SDL_Event e;
@@ -73,7 +89,7 @@ int main(void) {
 				}
 			}
 		}
-	
+
 		Terminal_Update(&terminal);
 
 		TextScreen_Render(&terminal.buffer, &terminal.video);

@@ -21,5 +21,7 @@
 #include <X11/Xutil.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <noch/json.h>
+#include <noch/args.h>
 
 #endif
