@@ -1,7 +1,7 @@
 <h1 align="center">yterm</h1>
 <p align="center">
     <a href="./LICENSE">
-        <img alt="License" src="https://img.shields.io/badge/license-GPL v3-26c374?style=for-the-badge">
+        <img alt="License" src="https://img.shields.io/badge/license-MIT v3-26c374?style=for-the-badge">
     </a>
     <a href="https://github.com/yeti0904/yterm/issues">
         <img alt="Issues" src="https://img.shields.io/github/issues/yeti0904/yterm?style=for-the-badge&color=4f79e4">
