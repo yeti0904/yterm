@@ -79,6 +79,7 @@ void       TextScreen_SetCharacter(TextScreen* text, int x, int y, Cell cell);
 void       TextScreen_ScrollDown(TextScreen* text, int lines);
 void       TextScreen_PutCharacter(TextScreen* text, char ch);
 void       TextScreen_PutString(TextScreen* text, char* str);
+void       TextScreen_SetAttribute(TextScreen* text, uint16_t attr, bool on);
 void       TextScreen_Resize(TextScreen* text, Vec2 newSize);
 void       TextScreen_Render(TextScreen* text, Video* video);
 

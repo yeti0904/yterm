@@ -144,7 +144,7 @@ void PtPair(Pty* pty) {
 
 void Spawn(Pty* pty) {
 	pid_t p;
-	char* env[] = {"TERM=dumb", NULL};
+	char* env[] = {"TERM=xterm-16color", NULL};
 
 	p = fork();
 	if (p == 0) {

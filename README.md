@@ -5,6 +5,8 @@ Far from complete, any help is appreciated
 
 If you want to use it maybe wait until it has escape sequence support
 
+<img src="/img/screenshot.png">
+
 ## Build
 ```
 make
