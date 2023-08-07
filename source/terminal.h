@@ -28,6 +28,6 @@ void Terminal_Update(Terminal* terminal);
 // Pty
 void SetTerminalSize(Terminal* terminal);
 void PtPair(Pty* pty);
-void Spawn(Pty* pty);
+void Spawn(Pty* pty, char** env);
 
 #endif

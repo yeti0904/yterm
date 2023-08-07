@@ -5,6 +5,7 @@
 #define APP_VERSION "dev version"
 #define APP_AUTHOR  "yeti0904"
 #define APP_DESC    "The terminal emulator of the 27th century"
+#define TERM        "xterm-16color"
 #define SHELL       "/bin/bash"
 
 #endif

@@ -171,7 +171,10 @@ void TextScreen_Resize(TextScreen* text, Vec2 newSize) {
 }
 
 void TextScreen_Render(TextScreen* text, Video* video) {
-	SDL_SetRenderDrawColor(video->renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(
+		video->renderer,
+		text->colours->bg.r, text->colours->bg.g, text->colours->bg.b, 255
+	);
 	SDL_RenderClear(video->renderer);
 
 	for (int y = 0; y < text->size.y; ++ y) {

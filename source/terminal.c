@@ -1,3 +1,5 @@
+#include "safe.h"
+#include "util.h"
 #include "escapes.h"
 #include "terminal.h"
 #include "constants.h"
@@ -142,9 +144,34 @@ void PtPair(Pty* pty) {
 	}
 }
 
-void Spawn(Pty* pty) {
+void Spawn(Pty* pty, char** env) {
 	pid_t p;
-	char* env[] = {"TERM=xterm-16color", NULL};
+	//char* env[] = {"TERM=xterm-16color", NULL};
+
+	size_t envSize = 0;
+	for (size_t i = 0; env[i] != NULL; ++ i) {
+		++ envSize;
+	}
+	char** envArray = (char**) SafeMalloc((envSize + 1) * sizeof(char*));
+
+	for (size_t i = 0; i <= envSize; ++ i) {
+		envArray[i] = env[i];
+	}
+
+	bool termSet = false;
+	for (size_t i = 0; i < envSize; ++ i) {
+		if (StringStartsWith(envArray[i], "TERM=")) {
+			envArray[i] = "TERM=" TERM;
+			termSet     = true;
+		}
+	}
+
+	if (!termSet) {
+		envArray = (char**) SafeRealloc(envArray, (envSize + 2) * sizeof(char**));
+
+		envArray[envSize + 1] = NULL;
+		envArray[envSize]     = "TERM=" TERM;
+	}
 
 	p = fork();
 	if (p == 0) {
@@ -164,7 +191,7 @@ void Spawn(Pty* pty) {
 		dup2(pty->slave, 2);
 		close(pty->slave);
 
-		execle(SHELL, "-" SHELL, (char *)NULL, env);
+		execle(SHELL, "-" SHELL, (char*) NULL, envArray);
 		exit(1);
 	}
 	else if (p > 0) {

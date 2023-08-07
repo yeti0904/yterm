@@ -62,7 +62,7 @@ static void ParseFlags(args_t* args) {
 	}
 }
 
-int main(int argc, const char** argv) {
+int main(int argc, const char** argv, char** env) {
 	args_t args = args_new(argc, argv);
 	execPath    = args_shift(&args);
 	ParseFlags(&args);
@@ -80,7 +80,7 @@ int main(int argc, const char** argv) {
 	// init terminal
 	PtPair(&terminal.pty);
 	SetTerminalSize(&terminal);
-	Spawn(&terminal.pty);
+	Spawn(&terminal.pty, env);
 
 	// init colourscheme
 	ColourScheme colourScheme;
