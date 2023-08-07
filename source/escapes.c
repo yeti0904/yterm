@@ -214,7 +214,7 @@ static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount
 							terminal->buffer.attr.fg    = colour;
 						}
 						else if ((colour = BGColour(args[i])) != (uint8_t) -1) {
-							terminal->buffer.attr.attr |= ATTR_COLOUR_FG;
+							terminal->buffer.attr.attr |= ATTR_COLOUR_BG;
 							terminal->buffer.attr.bg    = colour;
 						}
 					}

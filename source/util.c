@@ -1,4 +1,4 @@
-#include "components.h"
+#include "util.h"
 #include "safe.h"
 
 void DumpSequence(char* seq) {
@@ -54,4 +54,15 @@ bool HexToColour(const char* colour, SDL_Color* ret) {
 	ret->a = 255;
 
 	return true;
+}
+
+char* GetUserShell(void) {
+	struct passwd* data = getpwuid(geteuid());
+
+	if (data == NULL) {
+		perror("getpwuid");
+		FATAL("Failed to get passwd data");
+	}
+
+	return data->pw_shell;
 }

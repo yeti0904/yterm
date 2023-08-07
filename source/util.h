@@ -17,5 +17,6 @@ bool  StringStartsWith(char* str, char* with);
 bool  StringIsNumeric(char* str);
 char* DupString(char* str);
 bool  HexToColour(const char *colour, SDL_Color* ret);
+char* GetUserShell(void);
 
 #endif

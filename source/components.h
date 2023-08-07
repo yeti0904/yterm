@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
+#include <pwd.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
