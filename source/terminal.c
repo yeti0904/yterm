@@ -191,7 +191,10 @@ void Spawn(Pty* pty, char** env) {
 		dup2(pty->slave, 2);
 		close(pty->slave);
 
-		execle(SHELL, "-" SHELL, (char*) NULL, envArray);
+		char* command = GetUserShell();
+
+		//execle(SHELL, "-" SHELL, (char*) NULL, envArray);
+		execle(command, command, (char*) NULL, envArray);
 		exit(1);
 	}
 	else if (p > 0) {
