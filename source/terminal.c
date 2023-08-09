@@ -46,9 +46,11 @@ void Terminal_Update(Terminal* terminal) {
 
 		switch (in) {
 			case '\x1b': {
-				HandleEscape(terminal);
-				break;
-			}
+				if (terminal->config.interpretEscapes) {
+					HandleEscape(terminal);
+					break;
+				}
+			} // fall through
 			default: {
 				TextScreen_PutCharacter(&terminal->buffer, in);
 			}

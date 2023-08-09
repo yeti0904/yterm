@@ -252,32 +252,7 @@ void HandleEscape(Terminal* terminal) {
 
 	NEXT_BYTE();
 
-	if (in == ']') {
-		NEXT_BYTE();
-	}
-
 	if (in != '[') {
-		// TODO: clean up this mess
-		NEXT_BYTE();
-		if (in != '0') {
-			return;
-		}
-		NEXT_BYTE();
-		if (in != ';') {
-			return;
-		}
-
-		char* title = SafeMalloc(1);
-		title[0]    = 0;
-
-		NEXT_BYTE();
-		while (in != 7) {
-			title = SafeRealloc(title, strlen(title) + 2);
-			strncat(title, &in, 1);
-			NEXT_BYTE();
-		}
-		// TODO: set title
-		free(title);
 		return;
 	}
 

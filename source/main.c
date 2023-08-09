@@ -31,11 +31,15 @@ static void Usage(FILE* file) {
 	args_usage_fprint(file, execPath, usages, ARRAY_LEN(usages), APP_DESC, true);
 }
 
-static void ParseFlags(args_t* args) {
-	bool flagHelp    = false;
-	bool flagVersion = false;
+static void ParseFlags(args_t* args, Terminal* terminal) {
+	bool flagHelp     = false;
+	bool flagVersion  = false;
+	bool flagNoEscape = false;
 	flag_bool("h", "help",    "Show the usage",   &flagHelp);
 	flag_bool("v", "version", "Show the version", &flagVersion);
+	flag_bool(
+		"e", "no-escape", "Disables interpreting escape sequences", &flagNoEscape
+	);
 
 	size_t where;
 	bool   extra;
@@ -60,16 +64,19 @@ static void ParseFlags(args_t* args) {
 
 		exit(0);
 	}
+
+	if (flagNoEscape) {
+		terminal->config.interpretEscapes = false;
+	}
 }
 
 int main(int argc, const char** argv, char** env) {
+	Terminal terminal;
+	Terminal_Init(&terminal);
+
 	args_t args = args_new(argc, argv);
 	execPath    = args_shift(&args);
-	ParseFlags(&args);
-
-	Terminal terminal;
-
-	Terminal_Init(&terminal);
+	ParseFlags(&args, &terminal);
 
 	// init video
 	terminal.video = Video_Init();
