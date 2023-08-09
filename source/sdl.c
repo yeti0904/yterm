@@ -78,7 +78,7 @@ void Video_OpenFont(Video* video, char* path) {
 		SDL_Color colour      = {255, 255, 255, 255};
 		char      asString[2] = {(char) i, 0};
 
-		SDL_Surface* textSurface = TTF_RenderText_Solid(
+		SDL_Surface* textSurface = TTF_RenderText_Blended(
 			video->font, asString, colour
 		);
 
