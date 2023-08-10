@@ -60,7 +60,7 @@ static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount
 		// cursor commands
 		case 'H':
 		case 'f': { // move cursor home/move cursor to
-			if (cmd == 'H' && argsCount == 0) {
+			if (argsCount == 0) {
 				terminal->buffer.cursor = (Vec2) {0, 0};
 				break;
 			}
@@ -286,6 +286,8 @@ void HandleEscape(Terminal* terminal) {
 				}
 			}
 		}
+
+		free(readStr);
 	}
 	else if (in == '?') { // option
 		NEXT_BYTE();
@@ -307,6 +309,7 @@ void HandleEscape(Terminal* terminal) {
 		}
 
 		option = atoi(readStr);
+		free(readStr);
 
 		InterpretOption(terminal, option, in);
 	}

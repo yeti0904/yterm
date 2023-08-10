@@ -107,6 +107,10 @@ void Video_OpenFont(Video* video, char* path) {
 
 	const char* str = "M";
 	TTF_SizeText(video->font, str, &video->charWidth, &video->charHeight);
+
+	SDL_SetWindowMinimumSize(
+		video->window, 21 * video->charWidth, 3 * video->charHeight
+	);
 }
 
 void Video_DrawCharacter(Video* video, int x, int y, uchar ch, SDL_Colour colour) {

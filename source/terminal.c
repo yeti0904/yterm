@@ -197,9 +197,11 @@ void Spawn(Pty* pty, char** env) {
 
 		//execle(SHELL, "-" SHELL, (char*) NULL, envArray);
 		execle(command, command, (char*) NULL, envArray);
+		free(envArray);
 		exit(1);
 	}
 	else if (p > 0) {
+		free(envArray);
 		close(pty->slave);
 		return;
 	}
