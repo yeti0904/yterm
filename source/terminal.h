@@ -14,15 +14,13 @@ typedef struct TerminalConfig {
 } TerminalConfig;
 
 typedef struct Terminal {
-	Pty            pty;
-	bool           running;
-	Video          video;
-	TextScreen     buffer;
-	TerminalConfig config;
+	Pty             pty;
+	TextScreen      buffer;
+	TerminalConfig* config;
 } Terminal;
 
 // Terminal
-void Terminal_Init(Terminal* terminal);
+void Terminal_Init(Terminal* terminal, char** env, Vec2 size);
 void Terminal_Update(Terminal* terminal);
 
 // Pty

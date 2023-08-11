@@ -10,9 +10,11 @@ Video Video_Init(void) {
 		FATAL("Failed to initialise SDL2");
 	}
 
+	ret.windowSize = (Vec2) {720, 400};
+
 	ret.window = SDL_CreateWindow(
-		APP_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 720, 400,
-		SDL_WINDOW_RESIZABLE
+		APP_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		ret.windowSize.x, ret.windowSize.y, SDL_WINDOW_RESIZABLE
 	);
 
 	if (ret.window == NULL) {

@@ -5,9 +5,12 @@
 #include "constants.h"
 #include "components.h"
 
-void Terminal_Init(Terminal* terminal) {
-	terminal->running                 = true;
-	terminal->config.interpretEscapes = true;
+void Terminal_Init(Terminal* terminal, char** env, Vec2 size) {
+	terminal->buffer = TextScreen_New(size.x, size.y);
+
+	PtPair(&terminal->pty);
+	SetTerminalSize(terminal);
+	Spawn(&terminal->pty, env);
 }
 
 void Terminal_Update(Terminal* terminal) {
@@ -46,7 +49,7 @@ void Terminal_Update(Terminal* terminal) {
 
 		switch (in) {
 			case '\x1b': {
-				if (terminal->config.interpretEscapes) {
+				if (terminal->config->interpretEscapes) {
 					HandleEscape(terminal);
 					break;
 				}

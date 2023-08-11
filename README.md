@@ -16,7 +16,7 @@ A terminal emulator written in C, based on [eduterm](https://www.uninformativ.de
 
 Far from complete, any help is appreciated
 
-If you want to use it maybe wait until it has escape sequence support
+If you want to use it maybe wait until it's usable (which it currently isn't)
 
 <img src="/img/screenshot.png">
 

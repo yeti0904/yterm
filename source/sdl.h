@@ -2,6 +2,7 @@
 #define YTERM_SDL_H
 
 #include "components.h"
+#include "types.h"
 
 typedef struct Video {
 	SDL_Window*   window;
@@ -10,6 +11,7 @@ typedef struct Video {
 	SDL_Texture*  characters[256];
 	int           charWidth;
 	int           charHeight;
+	Vec2          windowSize;
 } Video;
 
 Video Video_Init(void);

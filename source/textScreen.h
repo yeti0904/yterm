@@ -2,6 +2,7 @@
 #define YTERM_TEXTSCREEN_H
 
 #include "sdl.h"
+#include "types.h"
 #include "components.h"
 
 enum { // colours
@@ -44,11 +45,6 @@ typedef struct ColourScheme {
 	SDL_Color colour16[16];
 } ColourScheme;
 
-typedef struct Vec2 {
-	int x;
-	int y;
-} Vec2;
-
 typedef struct AttrInfo {
 	uint8_t  fg;
 	uint8_t  bg;
@@ -80,7 +76,9 @@ void       TextScreen_ScrollDown(TextScreen* text, int lines);
 void       TextScreen_PutCharacter(TextScreen* text, char ch);
 void       TextScreen_PutString(TextScreen* text, char* str);
 void       TextScreen_SetAttribute(TextScreen* text, uint16_t attr, bool on);
+void       TextScreen_HLine(TextScreen* text, Vec2 pos, int len, char ch);
 void       TextScreen_Resize(TextScreen* text, Vec2 newSize);
+void       TextScreen_Blit(TextScreen* text, TextScreen* src, Vec2 pos);
 void       TextScreen_Render(TextScreen* text, Video* video);
 
 #endif

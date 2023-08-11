@@ -54,6 +54,8 @@ static uint8_t BGColour(int colour) {
 	return FGColour(colour - 10);
 }
 
+#define NEXT_BYTE() if (!NextByte(terminal, &in)) {return;}
+
 static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount) {
 	// TODO: error checking
 	switch (cmd) {
@@ -233,18 +235,6 @@ static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount
 	}
 }
 
-void InterpretOption(Terminal* terminal, int option, char value) {
-	(void) terminal;
-
-	switch (option) {
-		default: {
-			printf("Set option %d to %c", option, value);
-			break;
-		}
-	}
-}
-
-#define NEXT_BYTE() if (!NextByte(terminal, &in)) {return;}
 
 void HandleEscape(Terminal* terminal) {
 	char  in;
@@ -252,66 +242,71 @@ void HandleEscape(Terminal* terminal) {
 
 	NEXT_BYTE();
 
-	if (in != '[') {
-		return;
-	}
+	if (in == '[') { // CSI
+		NEXT_BYTE();
 
-	NEXT_BYTE();
+		if (isdigit(in)) { // command
+			// TODO: maybe i should make this not a static array
+			int    args[256];
+			size_t argsCount = 0;
 
-	if (isdigit(in)) { // command
-		// TODO: maybe i should make this not a static array
-		int    args[256];
-		size_t argsCount = 0;
+			readStr    = SafeMalloc(1);
+			readStr[0] = 0;
 
-		readStr    = SafeMalloc(1);
-		readStr[0] = 0;
+			bool readingArgs = true;
 
-		bool readingArgs = true;
+			while (readingArgs) {
+				readStr = SafeRealloc(readStr, strlen(readStr) + 2);
+				strncat(readStr, &in, 1);
+				NEXT_BYTE();
 
-		while (readingArgs) {
-			readStr = SafeRealloc(readStr, strlen(readStr) + 2);
-			strncat(readStr, &in, 1);
-			NEXT_BYTE();
+				if (!isdigit(in)) {
+					args[argsCount] = atoi(readStr);
+					++ argsCount;
+					free(readStr);
+					readStr    = SafeMalloc(1);
+					readStr[0] = 0;
 
-			if (!isdigit(in)) {
-				args[argsCount] = atoi(readStr);
-				++ argsCount;
-				free(readStr);
-				readStr    = SafeMalloc(1);
-				readStr[0] = 0;
-
-				if (in != ';') {
-					readingArgs = false;
-					RunCommand(terminal, in, args, argsCount);
+					if (in != ';') {
+						readingArgs = false;
+						RunCommand(terminal, in, args, argsCount);
+					}
 				}
 			}
-		}
 
-		free(readStr);
+			free(readStr);
+		}
+		else if (in == '?') {
+			do {
+				NEXT_BYTE();
+			} while ((in != 'h') && (in != 'l'));
+		}
 	}
-	else if (in == '?') { // option
+	else if (in == ']') {
 		NEXT_BYTE();
-
-		int option;
-
-		readStr    = SafeMalloc(1);
-		readStr[0] = 0;
-
-		NEXT_BYTE();
-		while (!isdigit(in)) {
-			readStr = SafeRealloc(readStr, strlen(readStr) + 2);
-			strncat(readStr, &in, 1);
-			NEXT_BYTE();
-		}
-
-		if ((in != 'h') && (in != 'l')) {
+		if (in != '0') {
 			return;
 		}
 
-		option = atoi(readStr);
-		free(readStr);
+		NEXT_BYTE();
+		if (in != ';') {
+			return;
+		}
 
-		InterpretOption(terminal, option, in);
+		readStr  = SafeMalloc(1);
+		*readStr = 0;
+
+		NEXT_BYTE();
+
+		while (in != 7) {
+			readStr = SafeRealloc(readStr, strlen(readStr) + 2);
+			strncat(readStr, &in, 1);
+			
+			NEXT_BYTE();
+		}
+
+		printf("Title set to %s\n", readStr);
+		free(readStr);
 	}
 }
 

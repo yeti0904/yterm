@@ -141,6 +141,14 @@ void TextScreen_SetAttribute(TextScreen* text, uint16_t attr, bool on) {
 	}
 }
 
+void TextScreen_HLine(TextScreen* text, Vec2 pos, int len, char ch) {
+	text->cursor.y = pos.y;
+	for (int x = pos.x; x < pos.x + len; ++ x) {
+		text->cursor.x = x + pos.x;
+		TextScreen_PutCharacter(text, ch);
+	}
+}
+
 void TextScreen_Resize(TextScreen* text, Vec2 newSize) {
 	size_t size     = newSize.x * newSize.y * sizeof(Cell);
 	Cell*  newCells = (Cell*) SafeMalloc(size);
@@ -168,6 +176,15 @@ void TextScreen_Resize(TextScreen* text, Vec2 newSize) {
 	text->size = newSize;
 	free(text->cells);
 	text->cells = newCells;
+}
+
+void TextScreen_Blit(TextScreen* text, TextScreen* src, Vec2 pos) {
+	for (int x = 0; x < src->size.x; ++ x) {
+		for (int y = 0; y < src->size.y; ++ y) {
+			Cell cell = TextScreen_GetCharacter(src, x, y);
+			TextScreen_SetCharacter(text, x + pos.x, y + pos.y, cell);
+		}
+	}
 }
 
 void TextScreen_Render(TextScreen* text, Video* video) {

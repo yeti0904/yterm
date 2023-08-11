@@ -4,6 +4,7 @@
 #include "terminal.h"
 #include "components.h"
 
+bool ShiftPressed(const uint8_t* keys);
 void HandleInputEvent(SDL_Event* e, Terminal* terminal);
 
 #endif

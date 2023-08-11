@@ -1,3 +1,4 @@
+#include "app.h"
 #include "sdl.h"
 #include "safe.h"
 #include "util.h"
@@ -31,10 +32,11 @@ static void Usage(FILE* file) {
 	args_usage_fprint(file, execPath, usages, ARRAY_LEN(usages), APP_DESC, true);
 }
 
-static void ParseFlags(args_t* args, Terminal* terminal) {
+static void ParseFlags(args_t* args, TerminalConfig* config) {
 	bool flagHelp     = false;
 	bool flagVersion  = false;
 	bool flagNoEscape = false;
+	
 	flag_bool("h", "help",    "Show the usage",   &flagHelp);
 	flag_bool("v", "version", "Show the version", &flagVersion);
 	flag_bool(
@@ -66,70 +68,21 @@ static void ParseFlags(args_t* args, Terminal* terminal) {
 	}
 
 	if (flagNoEscape) {
-		terminal->config.interpretEscapes = false;
+		config->interpretEscapes = false;
 	}
 }
 
 int main(int argc, const char** argv, char** env) {
-	Terminal terminal;
-	Terminal_Init(&terminal);
+	App app;
+	App_Init(&app, env);
 
 	args_t args = args_new(argc, argv);
 	execPath    = args_shift(&args);
-	ParseFlags(&args, &terminal);
+	ParseFlags(&args, &app.config);
 
-	// init video
-	terminal.video = Video_Init();
-	SDL_StartTextInput();
-	Video_OpenFont(&terminal.video, "./font.ttf");
-	terminal.buffer = TextScreen_New(80, 25);
-
-	// init terminal
-	PtPair(&terminal.pty);
-	SetTerminalSize(&terminal);
-	Spawn(&terminal.pty, env);
-
-	// init colourscheme
-	ColourScheme colourScheme;
-	LoadConfig(&colourScheme);
-	terminal.buffer.colours = &colourScheme;
-
-	while (terminal.running) {
-		SDL_Event e;
-		while (SDL_PollEvent(&e)) {
-			switch (e.type) {
-				case SDL_QUIT: {
-					terminal.running = false;
-					continue;
-				}
-				case SDL_KEYDOWN:
-				case SDL_TEXTINPUT: {
-					HandleInputEvent(&e, &terminal);
-					break;
-				}
-				case SDL_WINDOWEVENT: {
-					switch (e.window.event) {
-						case SDL_WINDOWEVENT_RESIZED: {
-							Vec2 newSize = {
-								e.window.data1 / terminal.video.charWidth,
-								e.window.data2 / terminal.video.charHeight
-							};
-
-							TextScreen_Resize(&terminal.buffer, newSize);
-							SetTerminalSize(&terminal);
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		Terminal_Update(&terminal);
-
-		TextScreen_Render(&terminal.buffer, &terminal.video);
-		SDL_RenderPresent(terminal.video.renderer);
+	while (app.running) {
+		App_Update(&app);
 	}
 
-	TextScreen_Free(&terminal.buffer);
-	Video_Free(&terminal.video);
+	App_Free(&app);
 }

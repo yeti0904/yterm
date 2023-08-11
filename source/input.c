@@ -1,7 +1,7 @@
 #include "util.h"
 #include "input.h"
 
-static bool ShiftPressed(const uint8_t* keys) {
+bool ShiftPressed(const uint8_t* keys) {
 	return (keys[SDL_SCANCODE_LSHIFT] || keys[SDL_SCANCODE_RSHIFT])? true : false;
 }
 
