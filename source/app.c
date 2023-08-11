@@ -171,7 +171,7 @@ void App_Update(App* app) {
 	char status[256];
 	sprintf(
 		status, "%s - [%d/%d]",
-		APP_NAME, (int) app->currentTab, (int) app->tabAmount
+		APP_NAME, (int) app->currentTab + 1, (int) app->tabAmount
 	);
 
 	app->screen.cursor = (Vec2) {0, 0};
