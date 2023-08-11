@@ -20,6 +20,11 @@ If you want to use it maybe wait until it's usable (which it currently isn't)
 
 <img src="/img/screenshot.png">
 
+## Keybinds
+- control + shift + t - new tab
+- control + shift + page up - previous tab
+- control + shift + page down - next tab
+
 ## Build
 ```
 make
