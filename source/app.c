@@ -11,6 +11,7 @@ void App_Init(App* app, char** env) {
 
 	// init config
 	app->config.interpretEscapes = true;
+	app->config.cursorEnabled    = true;
 
 	// init video
 	app->video = Video_Init();
@@ -72,6 +73,10 @@ Vec2 App_GetUsableArea(App* app) {
 		app->video.windowSize.x / app->video.charWidth,
 		(app->video.windowSize.y / app->video.charHeight) - 1
 	};
+}
+
+void App_UpdateTitle(App* app) {
+	SDL_SetWindowTitle(app->video.window, App_CurrentTab(app)->title);
 }
 
 void App_Update(App* app) {
@@ -160,7 +165,13 @@ void App_Update(App* app) {
 	}
 
 	for (size_t i = 0; i < app->tabAmount; ++ i) {
+		char* tabTitle = app->tabs[i].title;
+		
 		Terminal_Update(&app->tabs[i]);
+
+		if (app->tabs[i].title != tabTitle) {
+			App_UpdateTitle(app);
+		}
 	}
 
 	app->screen.attr.attr |= ATTR_COLOUR_BG;

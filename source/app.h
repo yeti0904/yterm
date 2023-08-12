@@ -22,6 +22,7 @@ void      App_Free(App* app);
 void      App_AddTab(App* app);
 Terminal* App_CurrentTab(App* app);
 Vec2      App_GetUsableArea(App* app);
+void      App_UpdateTitle(App* app);
 void      App_Update(App* app);
 
 #endif

@@ -7,10 +7,16 @@
 
 void Terminal_Init(Terminal* terminal, char** env, Vec2 size) {
 	terminal->buffer = TextScreen_New(size.x, size.y);
+	terminal->title  = DupString(APP_NAME);
 
 	PtPair(&terminal->pty);
 	SetTerminalSize(terminal);
 	Spawn(&terminal->pty, env);
+}
+
+void Terminal_Free(Terminal* terminal) {
+	free(terminal->title);
+	TextScreen_Free(&terminal->buffer);
 }
 
 void Terminal_Update(Terminal* terminal) {
@@ -201,7 +207,7 @@ void Spawn(Pty* pty, char** env) {
 		//execle(SHELL, "-" SHELL, (char*) NULL, envArray);
 		execle(command, command, (char*) NULL, envArray);
 		free(envArray);
-		exit(1);
+		exit(1); // TODO: make this close the tab or something
 	}
 	else if (p > 0) {
 		free(envArray);

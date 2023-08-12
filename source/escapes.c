@@ -277,9 +277,21 @@ void HandleEscape(Terminal* terminal) {
 			free(readStr);
 		}
 		else if (in == '?') {
-			do {
+			readStr    = SafeMalloc(1);
+			readStr[0] = 0;
+		
+			NEXT_BYTE();
+			while ((in != 'h') && (in != 'l')) {
+				readStr = SafeRealloc(readStr, strlen(readStr) + 2);
+				strncat(readStr, &in, 1);
+
 				NEXT_BYTE();
-			} while ((in != 'h') && (in != 'l'));
+			}
+
+			int option = atoi(readStr);
+			free(readStr);
+
+			printf("Set option %d to %c\n", option, in);
 		}
 	}
 	else if (in == ']') {
@@ -305,8 +317,10 @@ void HandleEscape(Terminal* terminal) {
 			NEXT_BYTE();
 		}
 
+		free(terminal->title);
+		terminal->title = readStr;
+
 		printf("Title set to %s\n", readStr);
-		free(readStr);
 	}
 }
 
