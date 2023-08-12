@@ -291,7 +291,16 @@ void HandleEscape(Terminal* terminal) {
 			int option = atoi(readStr);
 			free(readStr);
 
-			printf("Set option %d to %c\n", option, in);
+
+			switch (option) {
+				case 25: {
+					terminal->config->cursorEnabled = in == 'h';
+					break;
+				}
+				default: {
+					printf("Set option %d to %c\n", option, in);
+				}
+			}
 		}
 	}
 	else if (in == ']') {

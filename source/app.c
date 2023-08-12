@@ -192,6 +192,6 @@ void App_Update(App* app) {
 	++ app->screen.cursor.y;
 	TextScreen_Blit(&app->screen, &App_CurrentTab(app)->buffer, (Vec2) {0, 1});
 
-	TextScreen_Render(&app->screen, &app->video);
+	TextScreen_Render(&app->screen, &app->video, app->config.cursorEnabled);
 	SDL_RenderPresent(app->video.renderer);
 }

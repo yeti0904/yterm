@@ -79,6 +79,6 @@ void       TextScreen_SetAttribute(TextScreen* text, uint16_t attr, bool on);
 void       TextScreen_HLine(TextScreen* text, Vec2 pos, int len, char ch);
 void       TextScreen_Resize(TextScreen* text, Vec2 newSize);
 void       TextScreen_Blit(TextScreen* text, TextScreen* src, Vec2 pos);
-void       TextScreen_Render(TextScreen* text, Video* video);
+void       TextScreen_Render(TextScreen* text, Video* video, bool showCursor);
 
 #endif

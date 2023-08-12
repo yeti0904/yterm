@@ -187,7 +187,7 @@ void TextScreen_Blit(TextScreen* text, TextScreen* src, Vec2 pos) {
 	}
 }
 
-void TextScreen_Render(TextScreen* text, Video* video) {
+void TextScreen_Render(TextScreen* text, Video* video, bool showCursor) {
 	SDL_SetRenderDrawColor(
 		video->renderer,
 		text->colours->bg.r, text->colours->bg.g, text->colours->bg.b, 255
@@ -214,7 +214,7 @@ void TextScreen_Render(TextScreen* text, Video* video) {
 				bg = text->colours->colour16[cell.attr.bg];
 			}
 
-			if ((x == text->cursor.x) && (y == text->cursor.y)) {
+			if (showCursor && (x == text->cursor.x) && (y == text->cursor.y)) {
 				SDL_Color temp = fg;
 				fg             = bg;
 				bg             = temp;
