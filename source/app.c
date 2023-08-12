@@ -43,6 +43,9 @@ void App_Free(App* app) {
 	Video_Free(&app->video);
 
 	// free tabs
+	for (size_t i = 0; i < app->tabAmount; ++ i) {
+		Terminal_Free(&app->tabs[i]);
+	}
 	free(app->tabs);
 }
 
