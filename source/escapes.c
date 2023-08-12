@@ -291,7 +291,6 @@ void HandleEscape(Terminal* terminal) {
 			int option = atoi(readStr);
 			free(readStr);
 
-
 			switch (option) {
 				case 25: {
 					terminal->config->cursorEnabled = in == 'h';
